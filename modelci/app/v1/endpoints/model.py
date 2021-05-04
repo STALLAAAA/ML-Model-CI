@@ -17,18 +17,19 @@ from fastapi.exceptions import RequestValidationError, HTTPException
 from pydantic.error_wrappers import ErrorWrapper
 from starlette.responses import JSONResponse
 
-from modelci.hub.manager import register_model
+from modelci.hub.register.publish import register_model
 from modelci.persistence.service_ import get_by_id, get_models, update_model, delete_model, exists_by_id
 from modelci.types.models import MLModel, BaseMLModel, ModelUpdateSchema, Framework, Engine, Task
 
 router = APIRouter()
 
 
-@router.get('/', response_model=List[MLModel], response_model_by_alias=False)
+@router.get('/')
 def get_all_models(architecture: str = None, framework: Framework = None, engine: Engine = None, task: Task = None,
                   version: int = None):
     models = get_models(architecture=architecture, framework=framework, engine=engine, task=task, version=version)
-    return models
+    content = list(map( lambda item: json.loads(item.json(by_alias=False)), models))
+    return JSONResponse(content=content)
 
 
 @router.get('/{id}')
