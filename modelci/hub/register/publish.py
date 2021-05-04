@@ -39,9 +39,8 @@ from modelci.utils.misc import make_dir
 
 def _download_model_from_url(url, file_path, hash_prefix=None, progress=True):
     file_size = None
-
     req = Request(url)
-    u = urlopen(req)
+    u = urlopen(req)  #nosec
     meta = u.info()
     if hasattr(meta, 'getheaders'):
         content_length = meta.getheaders("Content-Length")
